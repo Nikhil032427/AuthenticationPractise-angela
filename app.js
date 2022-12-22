@@ -4,6 +4,7 @@ const ejs = require("ejs");
 const app = express();
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
+const encrypt = require("mongoose-encryption");
 
 app.use(express.static("public"));
 app.set('view engine','ejs');
@@ -19,10 +20,13 @@ mongoose.connect('mongodb://127.0.0.1:27017/userDb', {
 });
 
 
-const userSchema = {
+const userSchema = new mongoose.Schema({
     email: String,
     password: String
-};
+});
+
+const secret = "encryptionUsingMongooseEncryptionPlugin";
+userSchema.plugin(encrypt,{secret:secret, encryptedFields: ["password"]});
 
 const User = new mongoose.model("User",userSchema);
 
